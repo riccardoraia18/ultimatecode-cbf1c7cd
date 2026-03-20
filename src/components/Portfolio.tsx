@@ -1,62 +1,98 @@
+import portfolio1 from "@/assets/portfolio-1.png";
+import portfolio2 from "@/assets/portfolio-2.png";
+import portfolio3 from "@/assets/portfolio-3.png";
+import portfolio4 from "@/assets/portfolio-4.png";
+import portfolio5 from "@/assets/portfolio-5.png";
+import portfolio6 from "@/assets/portfolio-6.png";
+import portfolio7 from "@/assets/portfolio-7.png";
+
 const projects = [
   {
-    title: "Luxe Fashion",
-    category: "E-Commerce",
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=400&fit=crop",
+    img: portfolio1,
+    tag: "Negozio Online",
+    title: "LuxeMarket Italia",
+    desc: "Shop online di lusso dove un assistente AI suggerisce i prodotti giusti a ogni cliente. Vendite aumentate del 38%.",
+    tech: ["Next.js", "Node", "AI"],
   },
   {
-    title: "FinTech Dashboard",
-    category: "Web App",
-    img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop",
+    img: portfolio3,
+    tag: "Health & Fitness",
+    title: "FitMind Pro",
+    desc: "App mobile cross-platform per il benessere personale con coach AI, tracking biometrico e piani personalizzati.",
+    tech: ["Flutter", "Python", "GPT-4"],
   },
   {
-    title: "GreenLife App",
-    category: "Mobile App",
-    img: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=400&fit=crop",
+    img: portfolio4,
+    tag: "Gestione Clienti",
+    title: "SmartDesk CRM",
+    desc: "Software aziendale che tiene traccia dei clienti e prevede chi sta per comprare — senza che il team debba fare nulla a mano.",
+    tech: ["React", "Claude", "PgSQL"],
   },
   {
-    title: "Artisan Café",
-    category: "Branding",
-    img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop",
+    img: portfolio5,
+    tag: "Food & Delivery",
+    title: "Tavola Pronto",
+    desc: "Piattaforma di food delivery con gestione real-time degli ordini, mappe live e chatbot per l'assistenza clienti.",
+    tech: ["Vue.js", "Firebase", "Maps"],
   },
   {
-    title: "TravelMate",
-    category: "UI/UX Design",
-    img: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&h=400&fit=crop",
+    img: portfolio6,
+    tag: "Analisi Dati",
+    title: "DataSphere Analytics",
+    desc: "Dashboard aziendale che trasforma numeri e dati complessi in grafici chiari — così sai sempre come va il business, a colpo d'occhio.",
+    tech: ["React", "D3.js", "Python"],
   },
   {
-    title: "SmartHome Hub",
-    category: "IoT Platform",
-    img: "https://images.unsplash.com/photo-1558002038-1055907df827?w=600&h=400&fit=crop",
+    img: portfolio7,
+    tag: "Firma Digitale",
+    title: "CloudSign Pro",
+    desc: "Sistema per firmare contratti online in pochi secondi, da qualsiasi dispositivo. Niente più stampe, scanner o attese.",
+    tech: ["Next.js", "Go", "Stripe"],
   },
 ];
 
 const Portfolio = () => {
   return (
-    <section id="portfolio" className="py-24 border-t border-border/40">
-      <div className="container">
-        <div className="text-center mb-16">
-          <p className="text-primary font-body font-semibold text-sm tracking-widest uppercase mb-3">
-            Portfolio
-          </p>
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold">
-            I nostri <span className="gradient-text">lavori</span>
+    <section
+      id="portfolio"
+      style={{ padding: "7rem 4rem", background: "var(--navy-mid)" }}
+    >
+      <div className="flex justify-between items-end mb-14 flex-wrap gap-4">
+        <div>
+          <div className="section-label">I nostri lavori</div>
+          <h2 className="section-title">
+            Cosa abbiamo<br />realizzato
           </h2>
         </div>
+        <a href="#cta" className="btn-outline">
+          Parliamo del tuo →
+        </a>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((p, i) => (
-            <div key={i} className="portfolio-card aspect-[3/2]">
-              <img src={p.img} alt={p.title} loading="lazy" />
-              <div className="portfolio-overlay">
-                <span className="text-primary font-body text-xs font-semibold tracking-widest uppercase mb-1">
-                  {p.category}
-                </span>
-                <h3 className="font-heading text-xl font-bold text-heading">{p.title}</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((p, i) => (
+          <div key={i} className="project-card">
+            <div
+              className="project-thumb"
+              style={{ backgroundImage: `url(${p.img})` }}
+            />
+            <div className="project-body">
+              <div className="project-tag">{p.tag}</div>
+              <div className="project-title" style={{ color: "var(--white)" }}>
+                {p.title}
               </div>
+              <div className="project-desc">{p.desc}</div>
             </div>
-          ))}
-        </div>
+            <div className="project-footer">
+              <div className="flex gap-1.5">
+                {p.tech.map((t, j) => (
+                  <span key={j} className="tech-chip">{t}</span>
+                ))}
+              </div>
+              <span className="project-arrow">↗</span>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
