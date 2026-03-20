@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
 
-const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Servizi", href: "#servizi" },
-  { label: "Chi Siamo", href: "#about" },
-  { label: "Portfolio", href: "#portfolio" },
-  { label: "Contatti", href: "#contatti" },
-];
-
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -18,66 +10,126 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "glass-nav py-3" : "py-5"
-      }`}
-    >
-      <div className="container flex items-center justify-between">
-        <a href="#home" className="font-heading text-2xl font-bold text-heading tracking-tight">
-          Ultimate<span className="gradient-text">Code</span>
-        </a>
+  const closeMenu = () => {
+    setMobileOpen(false);
+    document.body.style.overflow = "";
+  };
 
-        {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-foreground text-sm font-body font-medium hover:text-primary transition-colors duration-300"
-            >
-              {link.label}
-            </a>
-          ))}
-          <a href="#contatti" className="btn-primary text-xs">
-            Inizia Ora
-          </a>
+  const toggleMenu = () => {
+    setMobileOpen((prev) => {
+      document.body.style.overflow = !prev ? "hidden" : "";
+      return !prev;
+    });
+  };
+
+  return (
+    <>
+      <nav
+        className="fixed top-0 w-full z-[100] flex justify-between items-center glass-nav"
+        style={{
+          padding: scrolled ? "1rem 4rem" : "1.5rem 4rem",
+          animation: "fadeDown 0.8s ease both",
+          transition: "padding 0.3s",
+        }}
+      >
+        <div className="font-['Playfair_Display',serif] text-2xl font-bold tracking-[0.02em]" style={{ color: "var(--white)" }}>
+          Ultimate<span style={{ color: "var(--gold)" }}>Code</span>
         </div>
 
-        {/* Mobile Toggle */}
+        {/* Desktop links */}
+        <ul className="hidden md:flex gap-10 list-none">
+          <li>
+            <a
+              href="#about"
+              className="text-[0.85rem] font-medium tracking-[0.12em] uppercase no-underline transition-colors duration-300 hover:text-[var(--gold)]"
+              style={{ color: "var(--silver)" }}
+            >
+              Chi siamo
+            </a>
+          </li>
+          <li>
+            <a
+              href="#portfolio"
+              className="text-[0.85rem] font-medium tracking-[0.12em] uppercase no-underline transition-colors duration-300 hover:text-[var(--gold)]"
+              style={{ color: "var(--silver)" }}
+            >
+              Portfolio
+            </a>
+          </li>
+          <li>
+            <a href="#cta" className="nav-cta">
+              Contattaci
+            </a>
+          </li>
+        </ul>
+
+        {/* Hamburger */}
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden flex flex-col gap-1.5 p-2"
-          aria-label="Toggle menu"
+          className={`md:hidden flex flex-col gap-[5px] cursor-pointer p-1 bg-transparent border-none z-[200] ${mobileOpen ? "open" : ""}`}
+          onClick={toggleMenu}
+          aria-label="Menu"
         >
-          <span className={`block w-6 h-0.5 bg-foreground transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-2" : ""}`} />
-          <span className={`block w-6 h-0.5 bg-foreground transition-all duration-300 ${mobileOpen ? "opacity-0" : ""}`} />
-          <span className={`block w-6 h-0.5 bg-foreground transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          <span
+            className="block w-6 h-[2px] rounded-sm transition-transform duration-300"
+            style={{
+              background: "var(--white)",
+              transform: mobileOpen ? "translateY(7px) rotate(45deg)" : "none",
+            }}
+          />
+          <span
+            className="block w-6 h-[2px] rounded-sm transition-opacity duration-300"
+            style={{
+              background: "var(--white)",
+              opacity: mobileOpen ? 0 : 1,
+            }}
+          />
+          <span
+            className="block w-6 h-[2px] rounded-sm transition-transform duration-300"
+            style={{
+              background: "var(--white)",
+              transform: mobileOpen ? "translateY(-7px) rotate(-45deg)" : "none",
+            }}
+          />
         </button>
-      </div>
+      </nav>
 
       {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden glass-nav border-t border-border/30 mt-3 animate-fade-up">
-          <div className="container py-6 flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-foreground font-body text-lg hover:text-primary transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-            <a href="#contatti" className="btn-primary text-center mt-2" onClick={() => setMobileOpen(false)}>
-              Inizia Ora
-            </a>
-          </div>
-        </div>
-      )}
-    </nav>
+      <div
+        className="md:hidden fixed inset-0 z-[150] flex flex-col items-center justify-center gap-10"
+        style={{
+          background: "var(--navy)",
+          opacity: mobileOpen ? 1 : 0,
+          pointerEvents: mobileOpen ? "all" : "none",
+          transition: "opacity 0.3s",
+          display: "flex",
+        }}
+      >
+        <a
+          href="#about"
+          onClick={closeMenu}
+          className="font-['Playfair_Display',serif] text-4xl font-bold no-underline transition-colors duration-200 hover:text-[var(--gold)]"
+          style={{ color: "var(--white)" }}
+        >
+          Chi siamo
+        </a>
+        <a
+          href="#portfolio"
+          onClick={closeMenu}
+          className="font-['Playfair_Display',serif] text-4xl font-bold no-underline transition-colors duration-200 hover:text-[var(--gold)]"
+          style={{ color: "var(--white)" }}
+        >
+          Portfolio
+        </a>
+        <a
+          href="#cta"
+          onClick={closeMenu}
+          className="mt-4 px-10 py-4 border font-['DM_Sans',sans-serif] text-[0.85rem] font-semibold tracking-[0.12em] uppercase no-underline"
+          style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
+        >
+          Contattaci
+        </a>
+      </div>
+    </>
   );
 };
 

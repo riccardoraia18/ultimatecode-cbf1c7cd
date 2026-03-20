@@ -1,33 +1,29 @@
 const CTA = () => {
   return (
-    <section id="contatti" className="py-24 border-t border-border/40">
-      <div className="container">
-        <div className="relative rounded-3xl overflow-hidden glow-primary p-12 md:p-20 text-center"
-          style={{ background: "linear-gradient(135deg, hsl(260 35% 10%), hsl(261 40% 14%))" }}
-        >
-          {/* Decorative orb */}
-          <div className="absolute top-0 right-0 w-72 h-72 rounded-full opacity-15 blur-[80px]"
-            style={{ background: "hsl(261 100% 71%)" }} />
-
-          <p className="text-primary font-body font-semibold text-sm tracking-widest uppercase mb-4">
-            Pronto a iniziare?
-          </p>
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-heading mb-6 max-w-2xl mx-auto">
-            Trasformiamo insieme la tua <span className="gradient-text">visione</span>
-          </h2>
-          <p className="text-foreground max-w-lg mx-auto mb-8">
-            Contattaci per una consulenza gratuita. Raccontaci il tuo progetto 
-            e scopri come possiamo aiutarti a raggiungere i tuoi obiettivi.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a href="mailto:info@ultimatecode.it" className="btn-primary">
-              Scrivici Ora
-            </a>
-            <a href="#home" className="btn-outline">
-              Torna Su
-            </a>
-          </div>
-        </div>
+    <section
+      id="cta"
+      className="text-center"
+      style={{
+        padding: "5rem 4rem",
+        background: "linear-gradient(135deg, var(--navy-light) 0%, rgba(155,109,255,0.08) 100%)",
+        borderTop: "1px solid rgba(155,109,255,0.15)",
+        borderBottom: "1px solid rgba(155,109,255,0.15)",
+      }}
+    >
+      <div className="section-label">Inizia oggi</div>
+      <h2 className="section-title mx-auto max-w-[600px]">
+        Hai un'idea?<br />Parliamone.
+      </h2>
+      <p className="section-sub mx-auto mb-8">
+        Non serve sapere nulla di tecnico. Raccontaci cosa vorresti fare — pensiamo noi al resto. Risposta garantita entro 24 ore.
+      </p>
+      <div className="flex gap-4 justify-center flex-wrap mt-8">
+        <a href="mailto:info@ultimatecode.it" className="btn-primary">
+          ✉ info@ultimatecode.it
+        </a>
+        <a href="tel:+390000000000" className="btn-outline">
+          📞 Chiamaci gratis
+        </a>
       </div>
     </section>
   );

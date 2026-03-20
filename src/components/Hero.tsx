@@ -1,54 +1,69 @@
-const stats = [
-  { value: "50+", label: "Progetti Completati" },
-  { value: "98%", label: "Clienti Soddisfatti" },
-  { value: "5+", label: "Anni di Esperienza" },
-];
+import heroImg from "@/assets/portfolio-1.png";
 
 const Hero = () => {
   return (
-    <section id="home" className="min-h-screen flex items-center pt-24 pb-16 relative overflow-hidden">
-      {/* Ambient glow */}
-      <div className="absolute top-1/4 -right-32 w-[500px] h-[500px] rounded-full opacity-20 blur-[120px]"
-        style={{ background: "radial-gradient(circle, hsl(261 100% 71%), transparent)" }} />
-      <div className="absolute bottom-0 -left-32 w-[400px] h-[400px] rounded-full opacity-10 blur-[100px]"
-        style={{ background: "radial-gradient(circle, hsl(280 80% 65%), transparent)" }} />
+    <section
+      id="hero"
+      className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center relative overflow-hidden"
+      style={{ padding: "8rem 4rem 4rem" }}
+    >
+      <div className="hero-bg" />
+      <div className="hero-grid-lines" />
 
-      <div className="container grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
-        {/* Left */}
-        <div>
-          <p className="text-primary font-body font-semibold text-sm tracking-widest uppercase mb-4 animate-fade-up">
-            Agenzia Digitale Italiana
-          </p>
-          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] mb-6 animate-fade-up-delay-1">
-            Creiamo{" "}
-            <span className="gradient-text">esperienze</span>{" "}
-            digitali uniche
-          </h1>
-          <p className="text-foreground text-lg leading-relaxed max-w-lg mb-8 animate-fade-up-delay-2">
-            Trasformiamo le tue idee in prodotti digitali straordinari. 
-            Design, sviluppo e strategia per far crescere il tuo business online.
-          </p>
-          <div className="flex flex-wrap gap-4 animate-fade-up-delay-3">
-            <a href="#contatti" className="btn-primary">Parliamone</a>
-            <a href="#portfolio" className="btn-outline">Vedi i Lavori</a>
+      <div className="relative z-[1]">
+        <div className="hero-badge animate-fade-up">
+          🇮🇹 Agenzia digitale italiana · Catania, Sicilia
+        </div>
+        <h1
+          className="font-['Playfair_Display',serif] font-black leading-[1.05] tracking-[-0.02em] mb-6 animate-fade-up-delay-1"
+          style={{ fontSize: "clamp(3rem, 5vw, 5.5rem)", color: "var(--white)" }}
+        >
+          Digitale.<br />
+          <em className="not-italic block" style={{ color: "var(--gold)" }}>Intelligente.</em>
+          Senza compromessi.
+        </h1>
+        <p
+          className="text-[1.05rem] leading-[1.8] max-w-[480px] mb-12 animate-fade-up-delay-2"
+          style={{ color: "var(--silver)" }}
+        >
+          Hai un'idea, un prodotto o un'azienda da portare online? Noi realizziamo siti, app per smartphone e sistemi automatizzati che lavorano per te — anche mentre dormi.
+        </p>
+        <div className="flex gap-5 flex-wrap animate-fade-up-delay-3">
+          <a href="#portfolio" className="btn-primary">I nostri progetti</a>
+          <a href="#cta" className="btn-outline">Parlaci del tuo progetto →</a>
+        </div>
+        <div className="flex gap-12 mt-16 animate-fade-up-delay-4">
+          <div>
+            <div className="font-['Playfair_Display',serif] text-4xl font-bold" style={{ color: "var(--white)" }}>
+              50<span style={{ color: "var(--gold)" }}>+</span>
+            </div>
+            <div className="text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
+              Progetti consegnati
+            </div>
+          </div>
+          <div>
+            <div className="font-['Playfair_Display',serif] text-4xl font-bold" style={{ color: "var(--white)" }}>
+              98<span style={{ color: "var(--gold)" }}>%</span>
+            </div>
+            <div className="text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
+              Clienti soddisfatti
+            </div>
+          </div>
+          <div>
+            <div className="font-['Playfair_Display',serif] text-4xl font-bold" style={{ color: "var(--white)" }}>
+              5<span style={{ color: "var(--gold)" }}>+</span>
+            </div>
+            <div className="text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
+              Anni di esperienza
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Right — Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-6 animate-fade-up-delay-2">
-          {stats.map((stat, i) => (
-            <div
-              key={i}
-              className="card-hover bg-card border border-border/60 rounded-2xl p-8 text-center lg:text-left glow-primary"
-            >
-              <span className="block font-heading text-5xl lg:text-6xl font-bold gradient-text mb-2">
-                {stat.value}
-              </span>
-              <span className="text-foreground font-body text-sm tracking-wide">
-                {stat.label}
-              </span>
-            </div>
-          ))}
+      <div className="relative z-[1] flex justify-center items-center" style={{ animation: "fadeIn 1.2s 0.5s ease both" }}>
+        <div className="hero-img-wrap">
+          <img src={heroImg} alt="UltimateCode portfolio showcase" />
+          <div className="hero-img-overlay" />
         </div>
       </div>
     </section>
