@@ -32,28 +32,28 @@ const Hero = () => {
           <a href="#portfolio" className="btn-primary">I nostri progetti</a>
           <a href="#cta" className="btn-outline">Parlaci del tuo progetto →</a>
         </div>
-        <div className="flex gap-12 mt-16 mb-16 lg:mb-0 animate-fade-up-delay-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-12 mt-16 mb-16 lg:mb-0 animate-fade-up-delay-4">
           <div>
-            <div className="font-['Playfair_Display',serif] text-4xl font-bold" style={{ color: "var(--white)" }}>
+            <div className="font-['Playfair_Display',serif] text-3xl sm:text-4xl font-bold" style={{ color: "var(--white)" }}>
               50<span style={{ color: "var(--gold)" }}>+</span>
             </div>
-            <div className="text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
+            <div className="text-[0.7rem] sm:text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
               Progetti consegnati
             </div>
           </div>
           <div>
-            <div className="font-['Playfair_Display',serif] text-4xl font-bold" style={{ color: "var(--white)" }}>
+            <div className="font-['Playfair_Display',serif] text-3xl sm:text-4xl font-bold" style={{ color: "var(--white)" }}>
               98<span style={{ color: "var(--gold)" }}>%</span>
             </div>
-            <div className="text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
+            <div className="text-[0.7rem] sm:text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
               Clienti soddisfatti
             </div>
           </div>
           <div>
-            <div className="font-['Playfair_Display',serif] text-4xl font-bold" style={{ color: "var(--white)" }}>
+            <div className="font-['Playfair_Display',serif] text-3xl sm:text-4xl font-bold" style={{ color: "var(--white)" }}>
               5<span style={{ color: "var(--gold)" }}>+</span>
             </div>
-            <div className="text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
+            <div className="text-[0.7rem] sm:text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
               Anni di esperienza
             </div>
           </div>
