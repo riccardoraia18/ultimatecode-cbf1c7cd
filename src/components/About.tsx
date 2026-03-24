@@ -85,9 +85,17 @@ const About = () => {
             I nostri progetti in numeri
           </div>
           {metrics.map((m, i) => (
-            <div key={i} className="metric-row">
-              <div className="metric-name">{m.label}</div>
-              <div className="metric-bar-wrap">
+            <div key={i} className="metric-row flex-col sm:flex-row">
+              <div className="flex justify-between w-full sm:w-auto sm:contents">
+                <div className="metric-name">{m.label}</div>
+                <div
+                  className="text-[0.8rem] font-semibold sm:w-10 sm:text-right sm:order-last"
+                  style={{ color: "var(--gold)" }}
+                >
+                  {m.display}
+                </div>
+              </div>
+              <div className="metric-bar-wrap w-full">
                 <div
                   className="metric-bar-fill"
                   style={{
@@ -95,12 +103,6 @@ const About = () => {
                     transitionDelay: `${i * 150}ms`,
                   }}
                 />
-              </div>
-              <div
-                className="text-[0.8rem] font-semibold w-10 text-right"
-                style={{ color: "var(--gold)" }}
-              >
-                {m.display}
               </div>
             </div>
           ))}
