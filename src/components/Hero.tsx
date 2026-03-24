@@ -10,7 +10,7 @@ const Hero = () => {
       <div className="hero-bg" />
       <div className="hero-grid-lines" />
 
-      <div className="relative z-[1]">
+      <div className="relative z-[1] text-left">
         <div className="hero-badge animate-fade-up">
           🇮🇹 Agenzia digitale italiana · Catania, Sicilia
         </div>
