@@ -5,7 +5,8 @@ const Hero = () => {
     <section
       id="hero"
       className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center relative overflow-hidden"
-      style={{ padding: "8rem 4rem 4rem" }}
+      style={{ padding: "8rem 2rem 4rem" }}
+      className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center relative overflow-hidden sm:!px-16"
     >
       <div className="hero-bg" />
       <div className="hero-grid-lines" />

@@ -10,17 +10,17 @@ const services = [
 const Services = () => {
   return (
     <div
-      className="flex justify-center flex-wrap"
+      className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
       style={{
-        padding: "2rem 4rem",
+        padding: "2rem 2rem",
         borderTop: "1px solid rgba(255,255,255,0.05)",
         borderBottom: "1px solid rgba(255,255,255,0.05)",
         background: "var(--navy-mid)",
-        gap: "5rem",
+        gap: "1rem",
       }}
     >
       {services.map((s, i) => (
-        <div key={i} className="service-pill">
+        <div key={i} className="service-pill justify-center">
           <div className="service-pill-icon">{s.icon}</div>
           {s.label}
         </div>
