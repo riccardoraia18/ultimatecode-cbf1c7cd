@@ -10,42 +10,42 @@ const projects = [
   {
     img: portfolio1,
     tag: "Negozio Online",
-    title: "LuxeMarket Italia",
-    desc: "Shop online di lusso dove un assistente AI suggerisce i prodotti giusti a ogni cliente. Vendite aumentate del 38%.",
+    title: "Shop Online AI",
+    desc: "E-commerce su misura con assistente AI integrato che suggerisce i prodotti giusti a ogni visitatore, aumentando le conversioni.",
     tech: ["Next.js", "Node", "AI"],
   },
   {
     img: portfolio3,
     tag: "Health & Fitness",
-    title: "FitMind Pro",
-    desc: "App mobile cross-platform per il benessere personale con coach AI, tracking biometrico e piani personalizzati.",
+    title: "App Fitness & Wellness",
+    desc: "App mobile cross-platform per il benessere personale con coach AI, tracking biometrico e piani personalizzati per ogni utente.",
     tech: ["Flutter", "Python", "GPT-4"],
   },
   {
     img: portfolio4,
     tag: "Gestione Clienti",
-    title: "SmartDesk CRM",
-    desc: "Software aziendale che tiene traccia dei clienti e prevede chi sta per comprare — senza che il team debba fare nulla a mano.",
+    title: "CRM Aziendale",
+    desc: "Software gestionale per tracciare clienti e opportunità di vendita in tempo reale — senza che il team debba fare nulla a mano.",
     tech: ["React", "Claude", "PgSQL"],
   },
   {
     img: portfolio5,
     tag: "Food & Delivery",
-    title: "Tavola Pronto",
-    desc: "Piattaforma di food delivery con gestione real-time degli ordini, mappe live e chatbot per l'assistenza clienti.",
+    title: "Food App & Delivery",
+    desc: "Piattaforma di food delivery con gestione real-time degli ordini, mappe live e chatbot per l’assistenza clienti 24/7.",
     tech: ["Vue.js", "Firebase", "Maps"],
   },
   {
     img: portfolio6,
     tag: "Analisi Dati",
-    title: "DataSphere Analytics",
-    desc: "Dashboard aziendale che trasforma numeri e dati complessi in grafici chiari — così sai sempre come va il business, a colpo d'occhio.",
+    title: "Dashboard Analytics",
+    desc: "Dashboard aziendale che trasforma dati complessi in grafici chiari e intuitivi — così sai sempre come va il tuo business.",
     tech: ["React", "D3.js", "Python"],
   },
   {
     img: portfolio7,
     tag: "Firma Digitale",
-    title: "CloudSign Pro",
+    title: "Firma Digitale Online",
     desc: "Sistema per firmare contratti online in pochi secondi, da qualsiasi dispositivo. Niente più stampe, scanner o attese.",
     tech: ["Next.js", "Go", "Stripe"],
   },
@@ -53,22 +53,18 @@ const projects = [
 
 const Portfolio = () => {
   return (
-    <section
-      id="portfolio"
-      style={{ padding: "7rem 4rem", background: "var(--navy-mid)" }}
-    >
+    <section id="portfolio" style={{ padding: "7rem 4rem", background: "var(--navy-mid)" }}>
       <div className="flex justify-between items-end mb-14 flex-wrap gap-4">
         <div>
-          <div className="section-label">I nostri lavori</div>
+          <div className="section-label">Cosa realizziamo</div>
           <h2 className="section-title">
-            Cosa abbiamo<br />realizzato
+            Cosa possiamo<br />realizzare
           </h2>
         </div>
         <a href="#cta" className="btn-outline">
           Parliamo del tuo →
         </a>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((p, i) => (
           <div key={i} className="project-card">
