@@ -32,7 +32,7 @@ const Hero = () => {
           <a href="#portfolio" className="btn-primary">I nostri progetti</a>
           <a href="#cta" className="btn-outline">Parlaci del tuo progetto →</a>
         </div>
-        <div className="grid grid-cols-2 gap-6 sm:gap-12 mt-16 mb-16 lg:mb-0 animate-fade-up-delay-4">
+        <div className="grid grid-cols-2 gap-6 sm:gap-12 mt-8 mb-8 lg:mb-0 animate-fade-up-delay-4">
           <div>
             <div className="font-['Playfair_Display',serif] text-3xl sm:text-4xl font-bold" style={{ color: "var(--white)" }}>
               50<span style={{ color: "var(--gold)" }}>+</span>
