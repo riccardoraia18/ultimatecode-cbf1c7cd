@@ -20,9 +20,9 @@ const Services = () => {
       }}
     >
       {services.map((s, i) => (
-        <div key={i} className="service-pill justify-center">
-          <div className="service-pill-icon">{s.icon}</div>
-          {s.label}
+        <div key={i} className="service-pill flex items-center gap-3">
+          <div className="service-pill-icon w-8 text-center flex-shrink-0">{s.icon}</div>
+          <span>{s.label}</span>
         </div>
       ))}
     </div>
