@@ -18,8 +18,8 @@ const CTA = () => {
         Non serve sapere nulla di tecnico. Raccontaci cosa vorresti fare — pensiamo noi al resto. Risposta garantita entro 24 ore.
       </p>
       <div className="flex gap-4 justify-center flex-wrap mt-8">
-        <a href="mailto:ultimatecode26@gmail.com" className="btn-primary">
-          ✉ ultimatecode26@gmail.com
+        <a href="mailto:info@ultimatecode.it" className="btn-primary">
+          ✉ info@ultimatecode.it
         </a>
         <a href="tel:+393317504676" className="btn-outline">
           📞 3317504676
