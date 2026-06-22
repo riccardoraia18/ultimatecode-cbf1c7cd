@@ -1,4 +1,4 @@
-import heroImg from "@/assets/hero-devices.png";
+import MacbookHero from "./MacbookHero";
 
 const Hero = () => {
   return (
@@ -46,31 +46,10 @@ const Hero = () => {
           <a href="#portfolio" className="btn-primary">I nostri progetti</a>
           <a href="#cta" className="btn-outline">Parlaci del tuo progetto →</a>
         </div>
-        <div className="grid grid-cols-2 gap-6 sm:gap-12 mt-8 mb-8 lg:mb-0 animate-fade-up-delay-4">
-          <div>
-            <div className="font-['Playfair_Display',serif] text-3xl sm:text-4xl font-bold" style={{ color: "var(--white)" }}>
-              50<span style={{ color: "var(--gold)" }}>+</span>
-            </div>
-            <div className="text-[0.7rem] sm:text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
-              Progetti consegnati
-            </div>
-          </div>
-          <div>
-            <div className="font-['Playfair_Display',serif] text-3xl sm:text-4xl font-bold" style={{ color: "var(--white)" }}>
-              98<span style={{ color: "var(--gold)" }}>%</span>
-            </div>
-            <div className="text-[0.7rem] sm:text-[0.75rem] tracking-[0.1em] uppercase mt-1" style={{ color: "var(--silver)" }}>
-              Clienti soddisfatti
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div className="relative z-10 flex justify-center items-center" style={{ animation: "fadeIn 1.2s 0.5s ease both" }}>
-        <div className="hero-img-wrap">
-          <img src={heroImg} alt="UltimateCode portfolio showcase" />
-          <div className="hero-img-overlay" />
-        </div>
+      <div className="relative z-10 flex justify-center items-center w-full">
+        <MacbookHero />
       </div>
     </section>
   );
