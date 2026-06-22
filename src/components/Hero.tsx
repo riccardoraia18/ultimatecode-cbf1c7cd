@@ -1,4 +1,4 @@
-import heroImg from "@/assets/hero-devices.png";
+import MacbookHero from "./MacbookHero";
 
 const Hero = () => {
   return (
