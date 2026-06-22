@@ -107,15 +107,6 @@ const About = () => {
             </div>
           ))}
         </div>
-        <div className="ai-badge-card">
-          <div className="ai-dot" />
-          <div className="text-[0.75rem]">
-            <strong className="block text-[0.82rem]" style={{ color: "#9B6DFF" }}>
-              Automatizzato con AI
-            </strong>
-            <span style={{ color: "var(--silver)" }}>I tuoi processi lavorano da soli</span>
-          </div>
-        </div>
       </div>
     </section>
   );
