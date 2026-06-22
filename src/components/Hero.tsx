@@ -5,12 +5,26 @@ const Hero = () => {
     <section
       id="hero"
       className="min-h-screen grid grid-cols-1 lg:grid-cols-2 items-center relative overflow-hidden px-4 sm:px-16"
-      style={{ paddingTop: "8rem", paddingBottom: "4rem" }}
+      style={{ paddingTop: "8rem", paddingBottom: "4rem", backgroundColor: "#000000" }}
     >
-      <div className="hero-bg" />
-      <div className="hero-grid-lines" />
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        style={{ pointerEvents: "none" }}
+      >
+        <source
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4"
+          type="video/mp4"
+        />
+      </video>
+      <div className="absolute inset-0 z-[1]" style={{ background: "rgba(0,0,0,0.5)" }} />
+      <div className="hero-bg z-[2]" />
+      <div className="hero-grid-lines z-[2]" />
 
-      <div className="relative z-[1] text-left">
+      <div className="relative z-10 text-left">
         <div className="hero-badge animate-fade-up">
           🇮🇹 Agenzia digitale italiana · Catania, Sicilia
         </div>
@@ -52,7 +66,7 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="relative z-[1] flex justify-center items-center" style={{ animation: "fadeIn 1.2s 0.5s ease both" }}>
+      <div className="relative z-10 flex justify-center items-center" style={{ animation: "fadeIn 1.2s 0.5s ease both" }}>
         <div className="hero-img-wrap">
           <img src={heroImg} alt="UltimateCode portfolio showcase" />
           <div className="hero-img-overlay" />
