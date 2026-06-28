@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from "react";
+import NumberFlow from "@number-flow/react";
 
-const metrics = [
-  { label: "Velocità di caricamento", value: 97, display: "97" },
-  { label: "Tempo risposta sito", value: 92, display: "0.8s" },
-  { label: "Valutazione App Store", value: 96, display: "4.8★" },
-  { label: "Precisione automazioni", value: 94, display: "94%" },
-  { label: "Clienti soddisfatti", value: 98, display: "98%" },
+type Metric = {
+  label: string;
+  value: number;            // bar fill %
+  num: number;              // displayed number
+  format?: Intl.NumberFormatOptions;
+  suffix?: string;
+};
+
+const metrics: Metric[] = [
+  { label: "Velocità di caricamento", value: 97, num: 97, suffix: "/100" },
+  { label: "Tempo risposta sito", value: 92, num: 0.8, format: { minimumFractionDigits: 1, maximumFractionDigits: 1 }, suffix: "s" },
+  { label: "Valutazione App Store", value: 96, num: 4.8, format: { minimumFractionDigits: 1, maximumFractionDigits: 1 }, suffix: "★" },
+  { label: "Precisione automazioni", value: 94, num: 94, suffix: "%" },
+  { label: "Clienti soddisfatti", value: 98, num: 98, suffix: "%" },
 ];
 
 const features = [
