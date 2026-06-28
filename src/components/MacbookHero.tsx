@@ -1,197 +1,305 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-const useIsMobile = () => {
-  const [m, setM] = useState(false);
-  useEffect(() => {
-    const check = () => setM(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  return m;
+// Three.js MacBook — loaded from CDN, transparent canvas, autorotate + floating + mouse parallax
+const THREE_CDN = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+
+const loadThree = (): Promise<any> => {
+  if ((window as any).THREE) return Promise.resolve((window as any).THREE);
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${THREE_CDN}"]`);
+    if (existing) {
+      existing.addEventListener("load", () => resolve((window as any).THREE));
+      existing.addEventListener("error", reject);
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = THREE_CDN;
+    s.async = true;
+    s.onload = () => resolve((window as any).THREE);
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
 };
 
-const DashboardUI = () => (
-  <div
-    className="w-full h-full flex text-[6px] sm:text-[8px] overflow-hidden"
-    style={{
-      background: "linear-gradient(135deg, #0a0f2c 0%, #131a3d 100%)",
-      color: "#e6e9ff",
-      fontFamily: "ui-sans-serif, system-ui",
-    }}
-  >
-    {/* Sidebar */}
-    <div className="flex flex-col gap-2 p-2" style={{ width: "18%", background: "rgba(255,255,255,0.04)", borderRight: "1px solid rgba(124,58,237,0.25)" }}>
-      <div className="font-bold mb-1" style={{ color: "#7c3aed" }}>◆ ANALYTICS</div>
-      {["Dashboard", "Traffic", "Revenue", "Users", "Reports", "Settings"].map((l, i) => (
-        <div key={l} className="px-1.5 py-1 rounded" style={{ background: i === 0 ? "rgba(124,58,237,0.25)" : "transparent", color: i === 0 ? "#a78bfa" : "#9aa3c7" }}>
-          • {l}
-        </div>
-      ))}
-    </div>
-    {/* Main */}
-    <div className="flex-1 p-2 flex flex-col gap-2">
-      <div className="flex justify-between items-center">
-        <div className="font-semibold" style={{ color: "#a78bfa" }}>Overview · Q4 2026</div>
-        <div className="flex gap-1">
-          <span style={{ background: "rgba(34,211,238,0.2)", color: "#22d3ee" }} className="px-1.5 py-0.5 rounded">LIVE</span>
-        </div>
-      </div>
-      {/* KPI cards */}
-      <div className="grid grid-cols-3 gap-1.5">
-        {[
-          { l: "Revenue", v: "€128k", p: "+24%", c: "#22d3ee" },
-          { l: "Conversions", v: "3.847", p: "+12%", c: "#7c3aed" },
-          { l: "Sessions", v: "92k", p: "+8%", c: "#a78bfa" },
-        ].map((k) => (
-          <div key={k.l} className="p-1.5 rounded" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.2)" }}>
-            <div style={{ color: "#9aa3c7" }}>{k.l}</div>
-            <div className="font-bold" style={{ fontSize: "1.4em", color: "#fff" }}>{k.v}</div>
-            <div style={{ color: k.c }}>{k.p}</div>
-          </div>
-        ))}
-      </div>
-      {/* Charts */}
-      <div className="grid grid-cols-2 gap-1.5 flex-1">
-        <div className="p-1.5 rounded flex flex-col" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.2)" }}>
-          <div style={{ color: "#9aa3c7" }}>Traffic</div>
-          <svg viewBox="0 0 100 50" preserveAspectRatio="none" className="w-full flex-1">
-            <defs>
-              <linearGradient id="lg" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <path d="M0,40 L15,30 L30,35 L45,20 L60,25 L75,10 L100,15 L100,50 L0,50 Z" fill="url(#lg)" />
-            <path d="M0,40 L15,30 L30,35 L45,20 L60,25 L75,10 L100,15" stroke="#22d3ee" strokeWidth="1" fill="none" />
-          </svg>
-        </div>
-        <div className="p-1.5 rounded flex flex-col" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.2)" }}>
-          <div style={{ color: "#9aa3c7" }}>Conversions</div>
-          <svg viewBox="0 0 100 50" preserveAspectRatio="none" className="w-full flex-1">
-            {[10, 25, 18, 35, 28, 42, 38, 48].map((h, i) => (
-              <rect key={i} x={i * 12 + 2} y={50 - h} width="8" height={h} fill="#7c3aed" opacity={0.7 + i * 0.03} rx="1" />
-            ))}
-          </svg>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+const MacbookHero = () => {
+  const mountRef = useRef<HTMLDivElement>(null);
 
-const Macbook = () => {
-  const isMobile = useIsMobile();
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const mobileRotateY = useTransform(scrollYProgress, [0, 0.5], [-30, 20]);
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount) return;
+
+    let renderer: any;
+    let scene: any;
+    let camera: any;
+    let macbook: any;
+    let rafId = 0;
+    let running = false;
+    let disposed = false;
+    const isMobile = window.innerWidth < 768;
+    const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+
+    const onMouse = (e: MouseEvent) => {
+      if (isMobile) return;
+      const r = mount.getBoundingClientRect();
+      mouse.tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      mouse.ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+    };
+
+    loadThree().then((THREE: any) => {
+      if (disposed) return;
+      const width = mount.clientWidth;
+      const height = mount.clientHeight || 480;
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
+      camera.position.set(0, 0.4, 6.5);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(width, height);
+      renderer.setClearColor(0x000000, 0);
+      mount.appendChild(renderer.domElement);
+      renderer.domElement.style.pointerEvents = "none";
+      renderer.domElement.style.display = "block";
+
+      // Lights
+      scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+      const key = new THREE.DirectionalLight(0xffffff, 0.9);
+      key.position.set(3, 4, 5);
+      scene.add(key);
+      const rim = new THREE.PointLight(0x9b6dff, 1.6, 12);
+      rim.position.set(-3, 2, 2);
+      scene.add(rim);
+      const fill = new THREE.PointLight(0x22d3ee, 0.8, 10);
+      fill.position.set(3, -1, 2);
+      scene.add(fill);
+
+      // MacBook group
+      macbook = new THREE.Group();
+
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: 0x2d2d2d,
+        metalness: 0.85,
+        roughness: 0.35,
+      });
+      const darkMat = new THREE.MeshStandardMaterial({
+        color: 0x111111,
+        metalness: 0.6,
+        roughness: 0.4,
+      });
+
+      // Base (keyboard deck)
+      const baseGeo = new THREE.BoxGeometry(4, 0.12, 2.7);
+      const base = new THREE.Mesh(baseGeo, bodyMat);
+      base.position.y = -0.06;
+      macbook.add(base);
+
+      // Trackpad
+      const trackpad = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 0.005, 0.8),
+        new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.4, roughness: 0.6 })
+      );
+      trackpad.position.set(0, 0.005, 0.75);
+      macbook.add(trackpad);
+
+      // Keyboard area
+      const kb = new THREE.Mesh(
+        new THREE.BoxGeometry(3.4, 0.005, 1.3),
+        new THREE.MeshStandardMaterial({ color: 0x161616, metalness: 0.3, roughness: 0.7 })
+      );
+      kb.position.set(0, 0.005, -0.35);
+      macbook.add(kb);
+
+      // Screen group (lid)
+      const lid = new THREE.Group();
+      const lidBack = new THREE.Mesh(new THREE.BoxGeometry(4, 2.5, 0.08), bodyMat);
+      lidBack.position.set(0, 1.25, 0);
+      lid.add(lidBack);
+
+      // Screen bezel (front, dark)
+      const bezel = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.85, 2.38),
+        new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 0.2, roughness: 0.8 })
+      );
+      bezel.position.set(0, 1.25, 0.041);
+      lid.add(bezel);
+
+      // Screen content — canvas texture with brand gradient + animated grid
+      const sc = document.createElement("canvas");
+      sc.width = 1024;
+      sc.height = 640;
+      const ctx = sc.getContext("2d")!;
+      const drawScreen = (t: number) => {
+        const g = ctx.createLinearGradient(0, 0, sc.width, sc.height);
+        g.addColorStop(0, "#0a0f2c");
+        g.addColorStop(0.5, "#1a0f3d");
+        g.addColorStop(1, "#0d0d1a");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, sc.width, sc.height);
+        // glow
+        const rg = ctx.createRadialGradient(
+          sc.width / 2 + Math.sin(t * 0.0008) * 200,
+          sc.height / 2 + Math.cos(t * 0.001) * 120,
+          50,
+          sc.width / 2,
+          sc.height / 2,
+          700
+        );
+        rg.addColorStop(0, "rgba(155,109,255,0.55)");
+        rg.addColorStop(0.5, "rgba(34,211,238,0.15)");
+        rg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = rg;
+        ctx.fillRect(0, 0, sc.width, sc.height);
+        // grid lines
+        ctx.strokeStyle = "rgba(155,109,255,0.18)";
+        ctx.lineWidth = 1;
+        const offset = (t * 0.04) % 60;
+        for (let x = -60 + offset; x < sc.width; x += 60) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, sc.height);
+          ctx.stroke();
+        }
+        for (let y = -60 + offset; y < sc.height; y += 60) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(sc.width, y);
+          ctx.stroke();
+        }
+        // logo text
+        ctx.fillStyle = "rgba(255,255,255,0.92)";
+        ctx.font = "italic 700 96px 'Playfair Display', serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("UltimateCode", sc.width / 2, sc.height / 2 - 20);
+        ctx.fillStyle = "rgba(155,109,255,0.85)";
+        ctx.font = "500 28px system-ui, sans-serif";
+        ctx.fillText("digital · intelligent · senza compromessi", sc.width / 2, sc.height / 2 + 60);
+      };
+      drawScreen(0);
+      const tex = new THREE.CanvasTexture(sc);
+      tex.needsUpdate = true;
+      const screen = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.6, 2.2),
+        new THREE.MeshBasicMaterial({ map: tex })
+      );
+      screen.position.set(0, 1.25, 0.045);
+      lid.add(screen);
+
+      // Apple-ish logo on back (small accent)
+      const logo = new THREE.Mesh(
+        new THREE.CircleGeometry(0.18, 32),
+        new THREE.MeshStandardMaterial({ color: 0x9b6dff, emissive: 0x9b6dff, emissiveIntensity: 0.5 })
+      );
+      logo.position.set(0, 1.4, -0.045);
+      logo.rotation.y = Math.PI;
+      lid.add(logo);
+
+      // Hinge at base — lift the lid open
+      lid.position.set(0, 0, -1.35);
+      lid.rotation.x = -0.12; // slight backward tilt (open ~100°)
+      macbook.add(lid);
+
+      macbook.rotation.x = -0.18;
+      scene.add(macbook);
+
+      // Resize
+      const onResize = () => {
+        if (!mount || !renderer || !camera) return;
+        const w = mount.clientWidth;
+        const h = mount.clientHeight || 480;
+        renderer.setSize(w, h);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      };
+      window.addEventListener("resize", onResize);
+      if (!isMobile) window.addEventListener("mousemove", onMouse);
+
+      // Intersection observer — pause when offscreen
+      const io = new IntersectionObserver(
+        ([e]) => {
+          running = e.isIntersecting;
+          if (running) animate();
+        },
+        { threshold: 0.05 }
+      );
+      io.observe(mount);
+      running = true;
+
+      const startT = performance.now();
+      const animate = () => {
+        if (!running || disposed) return;
+        const t = performance.now() - startT;
+        // autorotate
+        macbook.rotation.y += 0.004;
+        // float
+        macbook.position.y = Math.sin(t * 0.0015) * 0.08;
+        // parallax (desktop)
+        if (!isMobile) {
+          mouse.x += (mouse.tx - mouse.x) * 0.05;
+          mouse.y += (mouse.ty - mouse.y) * 0.05;
+          macbook.rotation.y += mouse.x * 0.002;
+          macbook.rotation.x = -0.18 + mouse.y * 0.05;
+        }
+        // animate screen texture
+        drawScreen(t);
+        tex.needsUpdate = true;
+        renderer.render(scene, camera);
+        rafId = requestAnimationFrame(animate);
+      };
+      animate();
+
+      // cleanup attach
+      (mount as any).__cleanup = () => {
+        io.disconnect();
+        window.removeEventListener("resize", onResize);
+        window.removeEventListener("mousemove", onMouse);
+      };
+    }).catch((err) => console.error("Three.js load failed", err));
+
+    return () => {
+      disposed = true;
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      if ((mount as any).__cleanup) (mount as any).__cleanup();
+      if (renderer) {
+        renderer.dispose?.();
+        if (renderer.domElement && renderer.domElement.parentNode === mount) {
+          mount.removeChild(renderer.domElement);
+        }
+      }
+      if (scene) {
+        scene.traverse((obj: any) => {
+          if (obj.geometry) obj.geometry.dispose?.();
+          if (obj.material) {
+            if (Array.isArray(obj.material)) obj.material.forEach((m: any) => m.dispose?.());
+            else obj.material.dispose?.();
+          }
+        });
+      }
+    };
+  }, []);
 
   return (
-    <div ref={ref} className="relative w-full flex justify-center items-center" style={{ perspective: "1400px" }}>
-      {/* Purple glow */}
+    <div className="relative w-full flex justify-center items-center" style={{ minHeight: 380 }}>
+      {/* purple glow backdrop */}
       <div
+        aria-hidden
         className="absolute pointer-events-none"
         style={{
-          width: "120%",
-          height: "120%",
-          background: "radial-gradient(circle, rgba(124,58,237,0.15) 0%, rgba(124,58,237,0) 60%)",
+          width: "110%",
+          height: "110%",
+          background: "radial-gradient(circle, rgba(155,109,255,0.18) 0%, rgba(155,109,255,0) 60%)",
           filter: "blur(40px)",
         }}
       />
-      <motion.div
-        initial={
-          isMobile
-            ? { opacity: 1, y: 0 }
-            : { opacity: 0, y: 300, rotateY: 45, rotateX: 15 }
-        }
-        animate={
-          isMobile
-            ? { y: [0, -8, 0, 8, 0] }
-            : { opacity: 1, y: [0, -8, 0, 8, 0], rotateY: 20, rotateX: 5 }
-        }
-        transition={
-          isMobile
-            ? { y: { duration: 3, repeat: Infinity, ease: "easeInOut" } }
-            : {
-                opacity: { duration: 1.2, ease: "easeOut" },
-                rotateY: { duration: 2, ease: "easeOut" },
-                rotateX: { duration: 2, ease: "easeOut" },
-                y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 2 },
-              }
-        }
-        style={{
-          rotateY: isMobile ? mobileRotateY : undefined,
-          transformStyle: "preserve-3d",
-          width: "100%",
-          maxWidth: "560px",
-        }}
-      >
-        {/* Screen */}
-        <div
-          style={{
-            background: "#1a1a1a",
-            borderRadius: "14px 14px 4px 4px",
-            padding: "14px 14px 22px",
-            boxShadow: "0 30px 60px rgba(0,0,0,0.6), inset 0 0 0 1px #3a3a3a",
-            transformOrigin: "bottom",
-          }}
-        >
-          <div
-            style={{
-              background: "#000",
-              borderRadius: "6px",
-              overflow: "hidden",
-              aspectRatio: "16/10",
-              border: "1px solid #2d2d2d",
-              position: "relative",
-            }}
-          >
-            <DashboardUI />
-            {/* camera notch */}
-            <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "4px", height: "4px", background: "#222", borderRadius: "50%" }} />
-          </div>
-          {/* Apple logo area / bottom chin */}
-          <div className="text-center mt-1.5" style={{ fontSize: "7px", color: "#555", letterSpacing: "0.2em" }}>MacBook Pro</div>
-        </div>
-        {/* Hinge */}
-        <div
-          style={{
-            height: "6px",
-            background: "linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)",
-            margin: "0 -6px",
-            borderRadius: "0 0 4px 4px",
-          }}
-        />
-        {/* Base */}
-        <div
-          style={{
-            background: "linear-gradient(180deg, #2d2d2d 0%, #1f1f1f 100%)",
-            height: "14px",
-            margin: "0 -14px",
-            borderRadius: "0 0 18px 18px",
-            position: "relative",
-            boxShadow: "0 20px 30px rgba(0,0,0,0.5)",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "60px",
-              height: "4px",
-              background: "#0f0f0f",
-              borderRadius: "2px",
-            }}
-          />
-        </div>
-      </motion.div>
+      <div
+        ref={mountRef}
+        className="relative w-full"
+        style={{ height: "clamp(380px, 52vh, 560px)", touchAction: "pan-y" }}
+      />
     </div>
   );
 };
 
-export default Macbook;
+export default MacbookHero;

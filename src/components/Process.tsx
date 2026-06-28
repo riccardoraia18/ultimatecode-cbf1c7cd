@@ -48,7 +48,7 @@ const Process = () => {
     >
       <div className="text-center max-w-[640px] mx-auto mb-16">
         <div className="section-label">Come lavoriamo</div>
-        <h2 className="section-title">Dal primo "ciao"<br />al sito online.</h2>
+        <h2 className="section-title">Dall'idea<br />al prodotto digitale.</h2>
         <p className="section-sub mx-auto">
           Un processo trasparente in 3 passi. Niente preventivi a sorpresa, niente settimane di silenzio.
         </p>
