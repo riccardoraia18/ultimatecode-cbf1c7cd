@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from "react";
+import NumberFlow from "@number-flow/react";
 
-const metrics = [
-  { label: "Velocità di caricamento", value: 97, display: "97" },
-  { label: "Tempo risposta sito", value: 92, display: "0.8s" },
-  { label: "Valutazione App Store", value: 96, display: "4.8★" },
-  { label: "Precisione automazioni", value: 94, display: "94%" },
-  { label: "Clienti soddisfatti", value: 98, display: "98%" },
+type Metric = {
+  label: string;
+  value: number;
+  num: number;
+  format?: { minimumFractionDigits?: number; maximumFractionDigits?: number };
+  suffix?: string;
+};
+
+const metrics: Metric[] = [
+  { label: "Velocità di caricamento", value: 97, num: 97, suffix: "/100" },
+  { label: "Tempo risposta sito", value: 92, num: 0.8, format: { minimumFractionDigits: 1, maximumFractionDigits: 1 }, suffix: "s" },
+  { label: "Valutazione App Store", value: 96, num: 4.8, format: { minimumFractionDigits: 1, maximumFractionDigits: 1 }, suffix: "★" },
+  { label: "Precisione automazioni", value: 94, num: 94, suffix: "%" },
+  { label: "Clienti soddisfatti", value: 98, num: 98, suffix: "%" },
 ];
 
 const features = [
@@ -89,10 +98,11 @@ const About = () => {
               <div className="flex justify-between w-full sm:w-auto sm:contents">
                 <div className="metric-name">{m.label}</div>
                 <div
-                  className="text-[0.8rem] font-semibold sm:w-10 sm:text-right sm:order-last"
+                  className="text-[0.95rem] font-semibold tabular-nums sm:min-w-[64px] sm:text-right sm:order-last inline-flex items-baseline justify-end gap-0.5"
                   style={{ color: "var(--gold)" }}
                 >
-                  {m.display}
+                  <NumberFlow value={visible ? m.num : 0} format={m.format} />
+                  {m.suffix && <span className="text-[0.78rem]">{m.suffix}</span>}
                 </div>
               </div>
               <div className="metric-bar-wrap w-full">
