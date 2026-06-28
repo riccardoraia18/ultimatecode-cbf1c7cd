@@ -3,9 +3,9 @@ import NumberFlow from "@number-flow/react";
 
 type Metric = {
   label: string;
-  value: number;            // bar fill %
-  num: number;              // displayed number
-  format?: Intl.NumberFormatOptions;
+  value: number;
+  num: number;
+  format?: { minimumFractionDigits?: number; maximumFractionDigits?: number };
   suffix?: string;
 };
 
