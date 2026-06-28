@@ -98,10 +98,11 @@ const About = () => {
               <div className="flex justify-between w-full sm:w-auto sm:contents">
                 <div className="metric-name">{m.label}</div>
                 <div
-                  className="text-[0.8rem] font-semibold sm:w-10 sm:text-right sm:order-last"
+                  className="text-[0.95rem] font-semibold tabular-nums sm:min-w-[64px] sm:text-right sm:order-last inline-flex items-baseline justify-end gap-0.5"
                   style={{ color: "var(--gold)" }}
                 >
-                  {m.display}
+                  <NumberFlow value={visible ? m.num : 0} format={m.format} />
+                  {m.suffix && <span className="text-[0.78rem]">{m.suffix}</span>}
                 </div>
               </div>
               <div className="metric-bar-wrap w-full">
