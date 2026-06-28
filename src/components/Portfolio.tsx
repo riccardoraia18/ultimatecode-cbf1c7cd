@@ -1,292 +1,252 @@
-import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
-import portfolio1 from "@/assets/portfolio-1.png";
-import portfolio3 from "@/assets/portfolio-3.png";
-import portfolio4 from "@/assets/portfolio-4.png";
-import portfolio5 from "@/assets/portfolio-5.png";
-import portfolio6 from "@/assets/portfolio-6.png";
-import portfolio7 from "@/assets/portfolio-7.png";
+import { useMemo, useState } from "react";
 
-const PROJECTS = [
-  { img: portfolio1, tag: "NEGOZIO ONLINE", title: "Shop Online AI", desc: "E-commerce su misura con assistente AI integrato che suggerisce i prodotti giusti a ogni visitatore, aumentando le conversioni.", tech: ["Next.js", "Node", "AI"] },
-  { img: portfolio3, tag: "HEALTH & FITNESS", title: "App Fitness & Wellness", desc: "App mobile cross-platform per il benessere personale con coach AI, tracking biometrico e piani personalizzati per ogni utente.", tech: ["Flutter", "Python", "GPT-4"] },
-  { img: portfolio4, tag: "GESTIONE CLIENTI", title: "CRM Aziendale", desc: "Software gestionale per tracciare clienti e opportunità di vendita in tempo reale — senza che il team debba fare nulla a mano.", tech: ["React", "Claude", "PgSQL"] },
-  { img: portfolio5, tag: "FOOD & DELIVERY", title: "Food App & Delivery", desc: "Piattaforma di food delivery con gestione real-time degli ordini, mappe live e chatbot per l'assistenza clienti 24/7.", tech: ["Vue.js", "Firebase", "Maps"] },
-  { img: portfolio6, tag: "ANALISI DATI", title: "Dashboard Analytics", desc: "Dashboard aziendale che trasforma dati complessi in grafici chiari e intuitivi — così sai sempre come va il tuo business.", tech: ["React", "D3.js", "Python"] },
-  { img: portfolio7, tag: "FIRMA DIGITALE", title: "Firma Digitale Online", desc: "Sistema per firmare contratti online in pochi secondi, da qualsiasi dispositivo. Niente più stampe, scanner o attese.", tech: ["Next.js", "Go", "Stripe"] },
+type Category = "Tutti" | "Siti Vetrina" | "Gestionali" | "App & Food" | "AI & Automazioni";
+
+const CATEGORY_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  Gestionali: { bg: "rgba(59,130,246,0.14)", border: "rgba(59,130,246,0.45)", text: "#60a5fa" },
+  "App & Food": { bg: "rgba(34,197,94,0.14)", border: "rgba(34,197,94,0.45)", text: "#4ade80" },
+  "Siti Vetrina": { bg: "rgba(249,115,22,0.14)", border: "rgba(249,115,22,0.45)", text: "#fb923c" },
+  "AI & Automazioni": { bg: "rgba(155,109,255,0.16)", border: "rgba(155,109,255,0.45)", text: "#a78bfa" },
+};
+
+type Project = {
+  category: Exclude<Category, "Tutti">;
+  catLabel: string;
+  title: string;
+  desc: string;
+  result: string;
+  tags: string[];
+};
+
+const PROJECTS: Project[] = [
+  {
+    category: "Gestionali",
+    catLabel: "Gestionale · Sanità & Fitness",
+    title: "Piattaforma integrata per professioni sanitarie e personal trainer",
+    desc: "Abbiamo costruito un sistema che unisce il sito pubblico con un gestionale completo: i pazienti o clienti prenotano online, il professionista gestisce agenda, schede, pagamenti e abbonamenti tutto da un unico pannello. Niente più WhatsApp per gli appuntamenti, niente più Excel per i pagamenti.",
+    result: "Zero telefonate per le prenotazioni. Gestione completa da smartphone.",
+    tags: ["Prenotazioni online", "Schede clienti/pazienti", "Abbonamenti", "Pagamenti integrati", "App mobile", "Dashboard"],
+  },
+  {
+    category: "App & Food",
+    catLabel: "Food App · Ristorazione",
+    title: "App di ordinazione per ristoranti e pizzerie senza commissioni",
+    desc: "I ristoratori pagano fino al 30% di commissioni a Glovo e Deliveroo. Abbiamo sviluppato app brandizzate con logo e colori del locale, ordini diretti, gestione tavoli e consegne — senza intermediari.",
+    result: "Il ristorante incassa il 100% di ogni ordine.",
+    tags: ["Ordini online", "Consegna a domicilio", "Menu digitale", "iOS & Android", "Gestione tavoli"],
+  },
+  {
+    category: "Siti Vetrina",
+    catLabel: "Sito Vetrina · Professionisti",
+    title: "Siti vetrina per studi professionali, artigiani e attività locali",
+    desc: "Dal dentista all'avvocato, dal fotografo al centro estetico: progettiamo siti veloci, curati e trovabili su Google. Ogni sito è pensato per il settore specifico del cliente, non copiato da un template generico.",
+    result: "Presenti su Google in meno di 30 giorni.",
+    tags: ["Design su misura", "SEO", "Mobile first", "CMS autonomo"],
+  },
+  {
+    category: "AI & Automazioni",
+    catLabel: "AI & Automazioni",
+    title: "Assistente AI per rispondere ai clienti su WhatsApp e email",
+    desc: "Abbiamo integrato agenti AI che rispondono automaticamente alle domande frequenti, raccolgono richieste di preventivo, fissano appuntamenti e smistano le comunicazioni — anche di notte e nei weekend.",
+    result: "Fino a 15 ore a settimana risparmiate sulla gestione messaggi.",
+    tags: ["WhatsApp Business", "Email automatica", "Prenotazioni autonome", "H24"],
+  },
+  {
+    category: "Gestionali",
+    catLabel: "Gestionale · Retail & Servizi",
+    title: "Gestionali personalizzati per ogni tipo di attività",
+    desc: "Dalla pizzeria con 10 tavoli alla clinica con 15 medici: costruiamo software gestionale su misura che sostituisce fogli Excel, quaderni cartacei e app generiche che non fanno mai esattamente quello che serve.",
+    result: "Tutto sotto controllo da un unico schermo.",
+    tags: ["Magazzino", "Cassa", "Turni", "CRM clienti", "Report automatici"],
+  },
+  {
+    category: "App & Food",
+    catLabel: "App Mobile · Prenotazioni",
+    title: "Web app e app mobile per centri sportivi, hotel e beauty",
+    desc: "I tuoi clienti prenotano dal telefono in 30 secondi, ricevono conferma e promemoria automatici, e possono disdire senza chiamarti. Tu vedi tutto in tempo reale dal tuo pannello.",
+    result: "Prenotazioni attive 24/7, disdette gestite in automatico.",
+    tags: ["Prenotazioni real-time", "Promemoria SMS/email", "iOS & Android", "Calendario integrato"],
+  },
 ];
 
-const TRANSITION = "transform 650ms cubic-bezier(0.4,0,0.2,1), opacity 650ms cubic-bezier(0.4,0,0.2,1), filter 650ms cubic-bezier(0.4,0,0.2,1)";
+const FILTERS: Category[] = ["Tutti", "Siti Vetrina", "Gestionali", "App & Food", "AI & Automazioni"];
 
 const Portfolio = () => {
-  const [index, setIndex] = useState(0);
-  const lockRef = useRef(false);
-  const touchStartX = useRef<number | null>(null);
-  const touchDeltaX = useRef(0);
-  const n = PROJECTS.length;
+  const [filter, setFilter] = useState<Category>("Tutti");
 
-  const go = (dir: 1 | -1) => {
-    if (lockRef.current) return;
-    lockRef.current = true;
-    setIndex((i) => (i + dir + n) % n);
-    setTimeout(() => { lockRef.current = false; }, 650);
-  };
-
-  const goTo = (target: number) => {
-    if (lockRef.current || target === index) return;
-    lockRef.current = true;
-    setIndex(target);
-    setTimeout(() => { lockRef.current = false; }, 650);
-  };
-
-  const getRole = (i: number): "center" | "left" | "right" | "hidden" => {
-    if (i === index) return "center";
-    if (i === (index - 1 + n) % n) return "left";
-    if (i === (index + 1) % n) return "right";
-    return "hidden";
-  };
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchDeltaX.current = 0;
-  };
-  const onTouchMove = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
-  };
-  const onTouchEnd = () => {
-    if (Math.abs(touchDeltaX.current) > 50) {
-      go(touchDeltaX.current < 0 ? 1 : -1);
-    }
-    touchStartX.current = null;
-    touchDeltaX.current = 0;
-  };
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") go(1);
-      else if (e.key === "ArrowLeft") go(-1);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  });
-
-  const styleFor = (role: ReturnType<typeof getRole>): React.CSSProperties => {
-    const base: React.CSSProperties = {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transition: TRANSITION,
-      willChange: "transform, opacity, filter",
-    };
-    if (role === "center") return { ...base, transform: "translate(-50%, -50%) scale(1)", opacity: 1, zIndex: 20, filter: "blur(0px)" };
-    if (role === "left") return { ...base, transform: "translate(-50%, -50%) translateX(-70%) scale(0.72)", opacity: 0.45, zIndex: 10, filter: "blur(3px)", cursor: "pointer" };
-    if (role === "right") return { ...base, transform: "translate(-50%, -50%) translateX(70%) scale(0.72)", opacity: 0.45, zIndex: 10, filter: "blur(3px)", cursor: "pointer" };
-    return { ...base, transform: "translate(-50%, -50%) scale(0.6)", opacity: 0, zIndex: 0, pointerEvents: "none", filter: "blur(6px)" };
-  };
+  const visible = useMemo(
+    () => (filter === "Tutti" ? PROJECTS : PROJECTS.filter((p) => p.category === filter)),
+    [filter]
+  );
 
   return (
     <section
       id="portfolio"
       style={{
         background: "#000000",
-        minHeight: "100vh",
         position: "relative",
         overflow: "hidden",
-        padding: "6rem 0 4rem",
+        padding: "6rem 0 5rem",
       }}
     >
-      {/* Section title */}
-      <div className="flex justify-between items-end mb-8 flex-wrap gap-4" style={{ padding: "0 4rem" }}>
-        <div>
-          <div className="section-label">Cosa realizziamo</div>
-          <h2 className="section-title">
-            Cosa possiamo<br />realizzare
-          </h2>
-        </div>
-        <a href="#cta" className="btn-outline">
-          Parliamo del tuo →
-        </a>
-      </div>
-
-      {/* Carousel viewport */}
+      {/* radial glow */}
       <div
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        aria-hidden
         style={{
-          position: "relative",
-          width: "100%",
-          height: "70vh",
-          minHeight: 520,
-          touchAction: "pan-y",
+          position: "absolute",
+          inset: 0,
+          background: "radial-gradient(ellipse 60% 50% at 50% 30%, rgba(155,109,255,0.12), transparent 70%)",
+          pointerEvents: "none",
         }}
-      >
-        {/* radial glow */}
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(139,92,246,0.15), transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
+      />
 
-        {/* Cards */}
-        {PROJECTS.map((p, i) => {
-          const role = getRole(i);
-          return (
-            <article
-              key={i}
-              onClick={() => {
-                if (role === "left") go(-1);
-                else if (role === "right") go(1);
-              }}
-              style={{
-                ...styleFor(role),
-                width: "min(500px, 86vw)",
-                background: "linear-gradient(135deg, #1a0533, #0d0d1a)",
-                border: "1px solid rgba(139,92,246,0.3)",
-                borderRadius: 24,
-                padding: 20,
-                boxShadow: role === "center" ? "0 30px 80px rgba(0,0,0,0.5)" : "none",
-              }}
-            >
-              <img
-                src={p.img}
-                alt={p.title}
+      <div style={{ position: "relative", padding: "0 clamp(1.25rem, 4vw, 4rem)" }}>
+        {/* Header */}
+        <div className="text-center max-w-[760px] mx-auto mb-10">
+          <div className="section-label">I nostri progetti</div>
+          <h2 className="section-title">Cosa abbiamo costruito<br />— e per chi.</h2>
+          <p className="section-sub mx-auto">
+            Ogni progetto nasce da un problema reale. Ecco come lo abbiamo risolto.
+          </p>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12">
+          {FILTERS.map((f) => {
+            const active = f === filter;
+            return (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className="transition-all duration-300"
                 style={{
-                  width: "100%",
-                  height: 200,
-                  objectFit: "cover",
-                  borderRadius: 16,
-                  display: "block",
+                  padding: "0.55rem 1.1rem",
+                  borderRadius: 999,
+                  fontSize: "0.85rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.01em",
+                  cursor: "pointer",
+                  border: active ? "1px solid #9B6DFF" : "1px solid rgba(255,255,255,0.15)",
+                  background: active ? "#9B6DFF" : "rgba(255,255,255,0.03)",
+                  color: active ? "#0a0612" : "rgba(255,255,255,0.75)",
+                  boxShadow: active ? "0 8px 24px rgba(155,109,255,0.35)" : "none",
                 }}
-              />
-              <div style={{ marginTop: 18 }}>
+              >
+                {f}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Grid */}
+        <div
+          className="grid gap-6 max-w-[1280px] mx-auto"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))",
+          }}
+        >
+          {visible.map((p) => {
+            const c = CATEGORY_COLORS[p.category];
+            return (
+              <article
+                key={p.title}
+                className="animate-fade-in"
+                style={{
+                  background: "linear-gradient(135deg, var(--navy-mid, #15102b) 0%, var(--navy-light, #0d0a1f) 100%)",
+                  border: "1px solid rgba(155,109,255,0.18)",
+                  borderRadius: 20,
+                  padding: "1.5rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "1rem",
+                  willChange: "transform",
+                  transition: "transform 350ms ease, border-color 350ms ease, box-shadow 350ms ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.borderColor = "rgba(155,109,255,0.4)";
+                  e.currentTarget.style.boxShadow = "0 20px 50px rgba(0,0,0,0.5)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.borderColor = "rgba(155,109,255,0.18)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
                 <span
                   style={{
-                    display: "inline-block",
-                    padding: "4px 12px",
-                    border: "1px solid #9B6DFF",
-                    color: "#9B6DFF",
+                    alignSelf: "flex-start",
+                    padding: "0.3rem 0.75rem",
                     borderRadius: 999,
-                    fontSize: 11,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
+                    fontSize: "0.7rem",
                     fontWeight: 600,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    background: c.bg,
+                    border: `1px solid ${c.border}`,
+                    color: c.text,
                   }}
                 >
-                  {p.tag}
+                  {p.catLabel}
                 </span>
-                <h3 style={{ color: "#fff", fontWeight: 700, fontSize: 22, marginTop: 12 }}>{p.title}</h3>
-                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 14, lineHeight: 1.5, marginTop: 8 }}>{p.desc}</p>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {p.tech.map((t, j) => (
-                      <span
-                        key={j}
-                        style={{
-                          fontSize: 11,
-                          padding: "4px 10px",
-                          borderRadius: 999,
-                          background: "rgba(255,255,255,0.08)",
-                          color: "rgba(255,255,255,0.7)",
-                        }}
-                      >
-                        {t}
-                      </span>
-                    ))}
+
+                <h3
+                  className="font-['Playfair_Display',serif]"
+                  style={{ color: "var(--white, #fff)", fontSize: "1.35rem", fontWeight: 700, lineHeight: 1.25 }}
+                >
+                  {p.title}
+                </h3>
+
+                <p style={{ color: "var(--silver, #9B8EC4)", fontSize: "0.92rem", lineHeight: 1.65 }}>
+                  {p.desc}
+                </p>
+
+                <div
+                  style={{
+                    padding: "0.85rem 1rem",
+                    borderRadius: 12,
+                    background: "rgba(155,109,255,0.08)",
+                    border: "1px solid rgba(155,109,255,0.22)",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "0.65rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      color: "#a78bfa",
+                      marginBottom: 4,
+                    }}
+                  >
+                    Risultato
                   </div>
-                  <ArrowUpRight size={20} color="#fff" />
+                  <div style={{ color: "#fff", fontSize: "0.92rem", fontWeight: 500, lineHeight: 1.45 }}>
+                    {p.result}
+                  </div>
                 </div>
-              </div>
-            </article>
-          );
-        })}
 
-        {/* Arrows (desktop) */}
-        <button
-          aria-label="Precedente"
-          onClick={() => go(-1)}
-          className="hidden md:flex"
-          style={{
-            position: "absolute",
-            left: 20,
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 56,
-            height: 56,
-            borderRadius: "50%",
-            border: "1px solid rgba(255,255,255,0.6)",
-            background: "rgba(0,0,0,0.4)",
-            color: "#fff",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            zIndex: 30,
-            backdropFilter: "blur(8px)",
-          }}
-        >
-          <ArrowLeft size={22} />
-        </button>
-        <button
-          aria-label="Successivo"
-          onClick={() => go(1)}
-          className="hidden md:flex"
-          style={{
-            position: "absolute",
-            right: 20,
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 56,
-            height: 56,
-            borderRadius: "50%",
-            border: "1px solid rgba(255,255,255,0.6)",
-            background: "rgba(0,0,0,0.4)",
-            color: "#fff",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            zIndex: 30,
-            backdropFilter: "blur(8px)",
-          }}
-        >
-          <ArrowRight size={22} />
-        </button>
-      </div>
-
-      {/* Pagination dots */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 12,
-          marginTop: 32,
-        }}
-      >
-        {PROJECTS.map((_, i) => {
-          const active = i === index;
-          return (
-            <button
-              key={i}
-              aria-label={`Vai al progetto ${i + 1}`}
-              onClick={() => goTo(i)}
-              style={{
-                width: active ? 10 : 8,
-                height: active ? 10 : 8,
-                borderRadius: "50%",
-                border: "none",
-                padding: 0,
-                background: active ? "#fff" : "rgba(255,255,255,0.3)",
-                transform: active ? "scale(1.1)" : "scale(1)",
-                transition: "all 300ms cubic-bezier(0.4,0,0.2,1)",
-                cursor: "pointer",
-              }}
-            />
-          );
-        })}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: "auto" }}>
+                  {p.tags.map((t) => (
+                    <span
+                      key={t}
+                      style={{
+                        fontSize: "0.72rem",
+                        padding: "0.3rem 0.65rem",
+                        borderRadius: 999,
+                        background: "rgba(255,255,255,0.06)",
+                        color: "rgba(255,255,255,0.7)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
