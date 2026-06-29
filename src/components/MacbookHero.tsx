@@ -199,17 +199,46 @@ const MacbookHero = () => {
       lidBack.position.set(0, BODY_D / 2, -0.04);
       lid.add(lidBack);
 
-      // Apple logo on back (etched, subtle glow)
-      const logoGeo = new THREE.CircleGeometry(0.22, 48);
+      // Apple logo on back lid — built from canvas texture for crisp shape
+      const lc = document.createElement("canvas");
+      lc.width = 256; lc.height = 256;
+      const lctx = lc.getContext("2d")!;
+      lctx.clearRect(0, 0, 256, 256);
+      lctx.fillStyle = "#0a0a0c";
+      // Body of apple
+      lctx.beginPath();
+      lctx.ellipse(128, 148, 70, 78, 0, 0, Math.PI * 2);
+      lctx.fill();
+      // Notch (bite) on right
+      lctx.globalCompositeOperation = "destination-out";
+      lctx.beginPath();
+      lctx.ellipse(208, 138, 28, 32, 0, 0, Math.PI * 2);
+      lctx.fill();
+      // Top notch above (between leaf and body)
+      lctx.beginPath();
+      lctx.ellipse(140, 70, 22, 14, -0.6, 0, Math.PI * 2);
+      lctx.fill();
+      lctx.globalCompositeOperation = "source-over";
+      // Leaf
+      lctx.fillStyle = "#0a0a0c";
+      lctx.beginPath();
+      lctx.ellipse(150, 58, 16, 26, -0.7, 0, Math.PI * 2);
+      lctx.fill();
+      const logoTex = new THREE.CanvasTexture(lc);
+      logoTex.anisotropy = 8;
+      const logoGeo = new THREE.PlaneGeometry(0.7, 0.7);
       const logoMat = new THREE.MeshStandardMaterial({
-        color: 0x2a2a2c,
-        metalness: 0.8,
-        roughness: 0.3,
-        emissive: 0x9b6dff,
-        emissiveIntensity: 0.18,
+        map: logoTex,
+        transparent: true,
+        color: 0xffffff,
+        metalness: 0.9,
+        roughness: 0.25,
+        emissive: 0xffffff,
+        emissiveMap: logoTex,
+        emissiveIntensity: 0.55,
       });
       const logo = new THREE.Mesh(logoGeo, logoMat);
-      logo.position.set(0, BODY_D / 2, -0.045);
+      logo.position.set(0, BODY_D / 2, -0.05);
       logo.rotation.y = Math.PI;
       lid.add(logo);
 
