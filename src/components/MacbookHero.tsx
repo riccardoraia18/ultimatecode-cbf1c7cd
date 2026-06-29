@@ -199,17 +199,46 @@ const MacbookHero = () => {
       lidBack.position.set(0, BODY_D / 2, -0.04);
       lid.add(lidBack);
 
-      // Apple logo on back (etched, subtle glow)
-      const logoGeo = new THREE.CircleGeometry(0.22, 48);
+      // Apple logo on back lid — built from canvas texture for crisp shape
+      const lc = document.createElement("canvas");
+      lc.width = 256; lc.height = 256;
+      const lctx = lc.getContext("2d")!;
+      lctx.clearRect(0, 0, 256, 256);
+      lctx.fillStyle = "#0a0a0c";
+      // Body of apple
+      lctx.beginPath();
+      lctx.ellipse(128, 148, 70, 78, 0, 0, Math.PI * 2);
+      lctx.fill();
+      // Notch (bite) on right
+      lctx.globalCompositeOperation = "destination-out";
+      lctx.beginPath();
+      lctx.ellipse(208, 138, 28, 32, 0, 0, Math.PI * 2);
+      lctx.fill();
+      // Top notch above (between leaf and body)
+      lctx.beginPath();
+      lctx.ellipse(140, 70, 22, 14, -0.6, 0, Math.PI * 2);
+      lctx.fill();
+      lctx.globalCompositeOperation = "source-over";
+      // Leaf
+      lctx.fillStyle = "#0a0a0c";
+      lctx.beginPath();
+      lctx.ellipse(150, 58, 16, 26, -0.7, 0, Math.PI * 2);
+      lctx.fill();
+      const logoTex = new THREE.CanvasTexture(lc);
+      logoTex.anisotropy = 8;
+      const logoGeo = new THREE.PlaneGeometry(0.7, 0.7);
       const logoMat = new THREE.MeshStandardMaterial({
-        color: 0x2a2a2c,
-        metalness: 0.8,
-        roughness: 0.3,
-        emissive: 0x9b6dff,
-        emissiveIntensity: 0.18,
+        map: logoTex,
+        transparent: true,
+        color: 0xffffff,
+        metalness: 0.9,
+        roughness: 0.25,
+        emissive: 0xffffff,
+        emissiveMap: logoTex,
+        emissiveIntensity: 0.55,
       });
       const logo = new THREE.Mesh(logoGeo, logoMat);
-      logo.position.set(0, BODY_D / 2, -0.045);
+      logo.position.set(0, BODY_D / 2, -0.05);
       logo.rotation.y = Math.PI;
       lid.add(logo);
 
@@ -243,76 +272,134 @@ const MacbookHero = () => {
       sc.height = 800;
       const ctx = sc.getContext("2d")!;
       const drawScreen = (t: number) => {
-        // base dark
-        ctx.fillStyle = "#08070d";
-        ctx.fillRect(0, 0, sc.width, sc.height);
+        const W = sc.width, H = sc.height;
+        // Dashboard background
+        ctx.fillStyle = "#0b1024";
+        ctx.fillRect(0, 0, W, H);
 
-        // flowing "M3"-style swooping ribbons
-        const cx = sc.width / 2 + Math.sin(t * 0.0004) * 60;
-        const cy = sc.height / 2 + Math.cos(t * 0.0005) * 30;
+        // Sidebar
+        const sbW = 200;
+        ctx.fillStyle = "#0a0f1f";
+        ctx.fillRect(0, 0, sbW, H);
+        ctx.fillStyle = "#9b6dff";
+        ctx.beginPath(); ctx.arc(28, 36, 12, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "700 16px system-ui, -apple-system, sans-serif";
+        ctx.fillText("UltimateCode", 50, 42);
+        const navItems = ["Dashboard", "Analytics", "Progetti", "Clienti", "Fatture", "Automazioni", "Impostazioni"];
+        navItems.forEach((n, i) => {
+          const y = 90 + i * 44;
+          if (i === 0) {
+            ctx.fillStyle = "rgba(155,109,255,0.18)";
+            ctx.fillRect(10, y - 18, sbW - 20, 32);
+          }
+          ctx.fillStyle = i === 0 ? "#fff" : "rgba(255,255,255,0.55)";
+          ctx.font = "500 13px system-ui";
+          ctx.fillRect(22, y - 6, 10, 10);
+          ctx.fillStyle = i === 0 ? "#fff" : "rgba(255,255,255,0.65)";
+          ctx.fillText(n, 44, y + 4);
+        });
 
-        const grad = ctx.createRadialGradient(cx, cy, 40, cx, cy, 700);
-        grad.addColorStop(0, "rgba(155,109,255,0.85)");
-        grad.addColorStop(0.35, "rgba(80,40,160,0.45)");
-        grad.addColorStop(0.7, "rgba(20,10,50,0.2)");
-        grad.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, sc.width, sc.height);
+        // Top bar
+        ctx.fillStyle = "#fff";
+        ctx.font = "700 22px system-ui";
+        ctx.fillText("Enterprise Analytics", sbW + 24, 44);
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.font = "400 12px system-ui";
+        ctx.fillText("Panoramica · Ultimi 30 giorni", sbW + 24, 64);
 
-        // sweeping curved ribbon (mimic Apple M3 wallpaper)
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(t * 0.0002);
-        for (let i = 0; i < 4; i++) {
+        // KPI cards
+        const kpis = [
+          { label: "Ricavi", val: "€47.2K", delta: "+12.4%", c: "#fb7185" },
+          { label: "Clienti", val: "1.284", delta: "+5.6%", c: "#9b6dff" },
+          { label: "Conversioni", val: "8.9%", delta: "+2.1%", c: "#22d3ee" },
+          { label: "Tasks AI", val: "342", delta: "+24%", c: "#34d399" },
+        ];
+        const cardW = (W - sbW - 24 - 24 - 18 * 3) / 4;
+        kpis.forEach((k, i) => {
+          const x = sbW + 24 + i * (cardW + 18);
+          const y = 86;
+          ctx.fillStyle = "#141a33";
           ctx.beginPath();
-          const radius = 180 + i * 80;
-          ctx.arc(0, 0, radius, 0.2, Math.PI - 0.2);
-          ctx.lineWidth = 30 - i * 4;
-          ctx.strokeStyle = `rgba(${180 - i * 20},${130 + i * 10},255,${0.18 - i * 0.025})`;
-          ctx.stroke();
-        }
-        ctx.restore();
-
-        // menu bar
-        ctx.fillStyle = "rgba(255,255,255,0.06)";
-        ctx.fillRect(0, 0, sc.width, 28);
-        ctx.fillStyle = "rgba(255,255,255,0.7)";
-        ctx.font = "600 14px system-ui, -apple-system, sans-serif";
-        ctx.textAlign = "left";
-        ctx.fillText("", 16, 20);
-        ctx.fillText("UltimateCode", 36, 19);
-
-        // dock at bottom
-        const dockW = 560, dockH = 64, dockY = sc.height - 88;
-        ctx.fillStyle = "rgba(255,255,255,0.08)";
-        ctx.beginPath();
-        const dx = (sc.width - dockW) / 2;
-        const dy = dockY;
-        const dr = 18;
-        ctx.moveTo(dx + dr, dy);
-        ctx.lineTo(dx + dockW - dr, dy);
-        ctx.quadraticCurveTo(dx + dockW, dy, dx + dockW, dy + dr);
-        ctx.lineTo(dx + dockW, dy + dockH - dr);
-        ctx.quadraticCurveTo(dx + dockW, dy + dockH, dx + dockW - dr, dy + dockH);
-        ctx.lineTo(dx + dr, dy + dockH);
-        ctx.quadraticCurveTo(dx, dy + dockH, dx, dy + dockH - dr);
-        ctx.lineTo(dx, dy + dr);
-        ctx.quadraticCurveTo(dx, dy, dx + dr, dy);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,0.1)";
-        ctx.stroke();
-
-        // dock icons
-        const colors = ["#9b6dff", "#22d3ee", "#f472b6", "#fbbf24", "#34d399", "#60a5fa", "#fb923c"];
-        for (let i = 0; i < 7; i++) {
-          ctx.fillStyle = colors[i];
-          const ix = dx + 32 + i * 72;
-          const iy = dy + dockH / 2;
-          ctx.beginPath();
-          ctx.roundRect ? ctx.roundRect(ix - 22, iy - 22, 44, 44, 10) : ctx.rect(ix - 22, iy - 22, 44, 44);
+          (ctx as any).roundRect?.(x, y, cardW, 100, 12);
           ctx.fill();
+          ctx.fillStyle = "rgba(255,255,255,0.5)";
+          ctx.font = "500 11px system-ui";
+          ctx.fillText(k.label, x + 14, y + 22);
+          ctx.fillStyle = "#fff";
+          ctx.font = "700 24px system-ui";
+          ctx.fillText(k.val, x + 14, y + 54);
+          ctx.fillStyle = k.c;
+          ctx.font = "600 11px system-ui";
+          ctx.fillText(k.delta, x + 14, y + 78);
+          // mini sparkline
+          ctx.strokeStyle = k.c;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          for (let p = 0; p < 12; p++) {
+            const px = x + cardW - 90 + p * 7;
+            const py = y + 60 - 8 - Math.sin(p * 0.6 + i + t * 0.001) * 10 - p * 1.2;
+            p === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+        });
+
+        // Bar chart card
+        const bx = sbW + 24, by = 210, bw = (W - sbW - 24 - 24 - 18) * 0.62, bh = 270;
+        ctx.fillStyle = "#141a33";
+        ctx.beginPath(); (ctx as any).roundRect?.(bx, by, bw, bh, 12); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.font = "600 14px system-ui";
+        ctx.fillText("Performance per Categoria", bx + 16, by + 26);
+        const cats = 8;
+        const barW = (bw - 60) / cats;
+        for (let i = 0; i < cats; i++) {
+          const h1 = 60 + Math.abs(Math.sin(i * 0.9 + t * 0.0008)) * 130;
+          const h2 = 40 + Math.abs(Math.cos(i * 0.7 + t * 0.0006)) * 100;
+          const x0 = bx + 30 + i * barW;
+          ctx.fillStyle = "#9b6dff";
+          ctx.fillRect(x0, by + bh - 30 - h1, barW * 0.4, h1);
+          ctx.fillStyle = "#22d3ee";
+          ctx.fillRect(x0 + barW * 0.45, by + bh - 30 - h2, barW * 0.4, h2);
         }
+
+        // Donut chart card
+        const dx2 = bx + bw + 18, dy2 = by, dw = W - dx2 - 24, dh = bh;
+        ctx.fillStyle = "#141a33";
+        ctx.beginPath(); (ctx as any).roundRect?.(dx2, dy2, dw, dh, 12); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.font = "600 14px system-ui";
+        ctx.fillText("Distribuzione Servizi", dx2 + 16, dy2 + 26);
+        const ccx = dx2 + dw / 2, ccy = dy2 + dh / 2 + 10;
+        const segs = [{ v: 0.42, c: "#9b6dff" }, { v: 0.28, c: "#22d3ee" }, { v: 0.18, c: "#fb7185" }, { v: 0.12, c: "#fbbf24" }];
+        let a0 = -Math.PI / 2;
+        segs.forEach(s => {
+          ctx.beginPath();
+          ctx.arc(ccx, ccy, 70, a0, a0 + s.v * Math.PI * 2);
+          ctx.arc(ccx, ccy, 45, a0 + s.v * Math.PI * 2, a0, true);
+          ctx.closePath();
+          ctx.fillStyle = s.c;
+          ctx.fill();
+          a0 += s.v * Math.PI * 2;
+        });
+
+        // Line chart at bottom
+        const lx = sbW + 24, ly = by + bh + 18, lw = W - sbW - 48, lh = H - ly - 24;
+        ctx.fillStyle = "#141a33";
+        ctx.beginPath(); (ctx as any).roundRect?.(lx, ly, lw, lh, 12); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.font = "600 14px system-ui";
+        ctx.fillText("Andamento Ricavi", lx + 16, ly + 26);
+        ctx.strokeStyle = "#9b6dff"; ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= 60; i++) {
+          const px = lx + 24 + i * ((lw - 48) / 60);
+          const py = ly + lh - 30 - (Math.sin(i * 0.18 + t * 0.0009) * 22 + i * 1.2 + 20);
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.lineTo(lx + lw - 24, ly + lh - 20);
+        ctx.lineTo(lx + 24, ly + lh - 20);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(155,109,255,0.18)";
+        ctx.fill();
       };
       drawScreen(0);
       const tex = new THREE.CanvasTexture(sc);
@@ -324,7 +411,7 @@ const MacbookHero = () => {
       screen.position.set(0, BODY_D / 2, 0.042);
       lid.add(screen);
 
-      // ---- Hinge cylinder (between base back edge and lid) ----
+      // ---- Hinge cylinder ----
       const hinge = new THREE.Mesh(
         new THREE.CylinderGeometry(0.06, 0.06, BODY_W * 0.92, 16),
         spaceBlackMatte,
@@ -333,9 +420,9 @@ const MacbookHero = () => {
       hinge.position.set(0, 0.03, -BODY_D / 2 + 0.05);
       macbook.add(hinge);
 
-      // Position lid: pivot at hinge, open ~105°
+      // Position lid: ~100° open from keyboard (10° tilted back from vertical)
       lid.position.set(0, 0.04, -BODY_D / 2);
-      lid.rotation.x = -Math.PI / 2 + 0.28; // slight backward open
+      lid.rotation.x = 0.175;
       macbook.add(lid);
 
       // overall pose
